@@ -1,10 +1,10 @@
 # DROP TABLES
 
-songplay_table_drop = "DROP table songplays"
-user_table_drop = "DROP table users"
-song_table_drop = "DROP table songs"
-artist_table_drop = "DROP table artists"
-time_table_drop = "DROP table time"
+songplay_table_drop = "DROP table IF EXISTS songplays"
+user_table_drop = "DROP table IF EXISTS users"
+song_table_drop = "DROP table IF EXISTS songs"
+artist_table_drop = "DROP table IF EXISTS artists"
+time_table_drop = "DROP table IF EXISTS time"
 
 # CREATE TABLES
 
@@ -15,7 +15,7 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays \
                          """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users \
-                    (user_id varchar, first_name varchar, last_name varchar, gender varchar, level varchar);
+                    (user_id int, first_name varchar, last_name varchar, gender varchar, level varchar);
                     """)
 
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs \
@@ -27,8 +27,8 @@ artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists \
                       """)
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
-                    (start_time time, hour int, day int, week int, year int, weekday varchar);
-""")
+                    (start_time timestamp, hour int, day int, week int, month int, year int, weekday int);
+                    """)
 
 # INSERT RECORDS
 
@@ -51,13 +51,18 @@ artist_table_insert = ("""INSERT INTO artists (artist_id, name, location, \
 
 
 time_table_insert = ("""INSERT INTO time (start_time, hour, day, \
-                                               week, year, weekday) \
-                            VALUES (%s, %s, %s, %s, %s, %s)""")
+                                            week, month, year, weekday) \
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)""")
 
 # FIND SONGS
 
-song_select = ("""
-""")
+song_select = ("""SELECT song_id, songs.artist_id \
+                  FROM songs \
+                  JOIN artists ON songs.artist_id = artists.artist_id
+                  WHERE title = %s
+                  AND artists.name = %s
+                  AND duration = %s     
+              """)
 
 # QUERY LISTS
 
