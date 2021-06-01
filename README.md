@@ -15,6 +15,7 @@
     - [ETL.ipynb](#etlipynb)
     - [Test.ipynb](#testipynb)
     - [Star_schema_model.png](#star_schema_modelpng)
+    - [Requirements.txt](#requirementstxt)
   - [Get Started](#get-started)
     - [Prerequisites](#prerequisites)
     - [Step one: Creating the database and tables](#step-one-creating-the-database-and-tables)
@@ -62,28 +63,32 @@ sql_queries.py
 etl.ipynb
 test.ipynb
 star_schema_model.png
+requirements.txt
 ```
 
-### Data
+#### Data
 This folder contains the log files and songs that will be processed and transformed into the project's five tables (songplays, songs, artists, users, time)
 
-### Create_Table.py
+#### Create_Table.py
 This script contains the code to drops and creates your tables. You run this file to reset your tables before each time you run your ETL scripts.
 
-### ETL.py
+#### ETL.py
 This script contains the code to reads and processes files from song_data and log_data and loads them into your tables.
 
-### Sql_queries.py
+#### Sql_queries.py
 This script contains all your sql queries, and is used by `create_tables.py`, `etl.py`, and `etl.ipynb`.
 
-### ETL.ipynb
+#### ETL.ipynb
 Reads and processes a single file from song_data and log_data and loads the data into your tables. This notebook contains detailed instructions on the ETL process for each of the tables.
 
-### Test.ipynb
+#### Test.ipynb
 Displays the first few rows of each table to let you check your database.
 
-### Star_schema_model.png
+#### Star_schema_model.png
 The star schema model used to create the tables for this project
+
+#### Requirements.txt 
+Contains all the dependencies to the project
 
 ## Get Started  
 
