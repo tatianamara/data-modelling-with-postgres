@@ -41,6 +41,16 @@ They'd like a data engineer to create a Postgres database with tables designed t
 ### Star Schema Model  
 ![Star Schema Model](https://github.com/tatianamara/data-modelling-with-postgres/blob/main/star_schema_model.png)
 
+- The fact table `songplays` stores the records in log data associated with song plays i.e. records with page.
+
+- The dimension table `users` stores the users in the app.
+
+- The dimension table `songs` stores the songs in the music database.
+
+- The dimension table `artists` stores the artists the in music database.
+
+- The dimension table `time` stores the timestamps of records in songplays broken down into specific units.
+
 ## What this repo contains
 ```
 data/
@@ -82,7 +92,7 @@ The star schema model used to create the tables for this project
 ### Prerequisites
 
 - Python3 installed (you can download [here](https://www.python.org/downloads/))
-- Postgresql local connection
+- Postgresql local connection. Please see detailed instructions in the [PostgreSQL documentation](https://www.postgresql.org/docs/current/runtime.html).
 
 ### Step one: Creating the database and tables
 
