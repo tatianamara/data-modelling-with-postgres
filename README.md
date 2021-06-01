@@ -8,6 +8,13 @@
     - [Objectives](#objectives)  
     - [Star Schema Model](#star-schema-model)  
   - [What this repo contains](#what-this-repo-contains)
+    - [Data](#data)
+    - [Create_Table.py](#create-tablepy)
+    - [ETL.py](#etlpy)
+    - [Sql_queries.py](#sql_queriespy)
+    - [ETL.ipynb](#etlipynb)
+    - [Test.ipynb](#testipynb)
+    - [Star_schema_model.png](#star_schema_modelpng)
   - [Get Started](#get-started)
     - [Prerequisites](#prerequisites)
     - [Step one: Creating the database and tables](#step-one-creating-the-database-and-tables)
@@ -46,6 +53,27 @@ etl.ipynb
 test.ipynb
 star_schema_model.png
 ```
+
+### Data
+This folder contains the log files and songs that will be processed and transformed into the project's five tables (songplays, songs, artists, users, time)
+
+### Create_Table.py
+This script contains the code to drops and creates your tables. You run this file to reset your tables before each time you run your ETL scripts.
+
+### ETL.py
+This script contains the code to reads and processes files from song_data and log_data and loads them into your tables.
+
+### Sql_queries.py
+This script contains all your sql queries, and is used by `create_tables.py`, `etl.py`, and `etl.ipynb`.
+
+### ETL.ipynb
+Reads and processes a single file from song_data and log_data and loads the data into your tables. This notebook contains detailed instructions on the ETL process for each of the tables.
+
+### Test.ipynb
+Displays the first few rows of each table to let you check your database.
+
+### Star_schema_model.png
+The star schema model used to create the tables for this project
 
 ## Get Started  
 
@@ -96,5 +124,3 @@ The log files in the dataset are partitioned by year and month. For example, her
 log_data/2018/11/2018-11-12-events.json
 log_data/2018/11/2018-11-13-events.json
 ```
-
-
