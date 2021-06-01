@@ -9,7 +9,7 @@
     - [Star Schema Model](#star-schema-model)  
   - [What this repo contains](#what-this-repo-contains)
     - [Data](#data)
-    - [Create_Table.py](#create-tablepy)
+    - [Create_Table.py](#create_tablepy)
     - [ETL.py](#etlpy)
     - [Sql_queries.py](#sql_queriespy)
     - [ETL.ipynb](#etlipynb)
