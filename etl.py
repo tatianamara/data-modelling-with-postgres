@@ -6,38 +6,52 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+
+    '''
+    Reads the json file, process and insert the right fields in the song and artist tables. 
+    Args:
+        cur: database cursor.
+        filepath: filepath to the json file
+    '''
     # open song file
-    df = 
+    df = pd.read_json(filepath, lines=True)
 
     # insert song record
-    song_data = 
+    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0].tolist()
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = 
+    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
-    # open log file
-    df = 
 
-    # filter by NextSong action
-    df = 
+    '''
+    Reads the json file, process, extract the data fields from the timestamp, and insert the right fields in the time, users and songplay tables. 
+    Args:
+        cur: database cursor.
+        filepath: filepath to the json file
+    '''
+    # open log file
+    df = pd.read_json(filepath, lines=True)
+
+    # filter by NextSong action (valid plays where length of play is not None)
+    df = df[df.page=='NextSong']
 
     # convert timestamp column to datetime
-    t = 
+    t = pd.to_datetime(df['ts'],  unit='ms')
     
     # insert time data records
-    time_data = 
-    column_labels = 
-    time_df = 
+    time_data = [t, t.dt.hour, t.dt.day, t.dt.week, t.dt.month, t.dt.year, t.dt.dayofweek]
+    column_labels = ['ts', 'hour', 'day', 'week', 'month', 'year', 'dayofweek']
+    time_df = pd.DataFrame(dict(zip(column_labels, time_data)))
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_df = 
+    user_df = pd.DataFrame(df, columns=('userId', 'firstName', 'lastName', 'gender', 'level'))
 
     # insert user records
     for i, row in user_df.iterrows():
@@ -56,11 +70,20 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = 
+        songplay_data = (songid, pd.to_datetime(row.ts, unit='ms'), row.userId, row.level, songid, artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
 def process_data(cur, conn, filepath, func):
+
+    '''
+    Reads the json file, process, extract the data fields from the timestamp, and insert the right fields in the time, users and songplay tables. 
+    Args:
+        cur: database cursor.
+        conn: database cunnection.
+        filepath: filepath to the song_data/log_data files
+        func: process_song_file or process_log_file functions.
+    '''
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -80,6 +103,17 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    
+    """    
+    - Establishes connection with the sparkify database and gets
+    cursor to it.  
+    
+    - Process data to song_data file.  
+    
+    - Process data to log_data file. 
+    
+    - Finally, closes the connection. 
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
