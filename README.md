@@ -98,6 +98,7 @@ Contains all the dependencies to the project
 
 - Python3 installed (you can download [here](https://www.python.org/downloads/))
 - Postgresql local connection. Please see detailed instructions in the [PostgreSQL documentation](https://www.postgresql.org/docs/current/runtime.html).
+- Install requirements with pip3 install -r requirements.txt.
 
 ### Step one: Creating the database and tables
 
