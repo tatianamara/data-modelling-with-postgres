@@ -19,22 +19,22 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays \
                          """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users \
-                    (user_id int PRIMARY KEY, first_name varchar, last_name varchar, gender varchar, level varchar);
+                    (user_id int PRIMARY KEY, first_name varchar NOT NULL, last_name varchar NOT NULL, gender varchar, level varchar NOT NULL);
                     """)
 temp_user_table_create = ("""CREATE TEMP TABLE IF NOT EXISTS tmp_users (LIKE users)""")
 
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs \
-                    (song_id varchar PRIMARY KEY, title varchar, artist_id varchar, year int, duration float);
+                    (song_id varchar PRIMARY KEY, title varchar NOT NULL, artist_id varchar NOT NULL, year int, duration float);
                     """)
 temp_song_table_create = ("""CREATE TEMP TABLE IF NOT EXISTS tmp_songs (LIKE songs)""");
 
 artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists \
-                      (artist_id varchar PRIMARY KEY, name varchar, location varchar, latitude float, longitude float);
+                      (artist_id varchar PRIMARY KEY, name varchar NOT NULL, location varchar, latitude float, longitude float);
                       """)
 temp_artist_table_create = ("""CREATE TEMP TABLE IF NOT EXISTS tmp_artists (LIKE artists);""")
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
-                    (start_time timestamp PRIMARY KEY, hour int, day int, week int, month int, year int, weekday int);
+                    (start_time timestamp PRIMARY KEY, hour int NOT NULL, day int NOT NULL, week int NOT NULL, month int NOT NULL, year int NOT NULL, weekday int NOT NULL);
                     """)
 temp_time_table_create = ("""CREATE TEMP TABLE IF NOT EXISTS tmp_time (LIKE time)""")
 
@@ -47,25 +47,26 @@ songplay_table_insert = ("""INSERT INTO songplays (start_time, user_id, \
 
 user_table_insert = ("""INSERT INTO users \
                         SELECT DISTINCT ON (user_id) * \
-                        FROM tmp_users ON CONFLICT DO NOTHING;""")
+                        FROM tmp_users ON CONFLICT (user_id) \
+                        DO UPDATE SET level = EXCLUDED.level;""")
 temp_user_table_insert = ("""COPY tmp_users FROM '/home/workspace/users.csv' \
                             DELIMITER ';' CSV;""")
 
 song_table_insert = ("""INSERT INTO songs \
                         SELECT DISTINCT ON (song_id) * \
-                        FROM tmp_songs ON CONFLICT DO NOTHING;""")
+                        FROM tmp_songs ON CONFLICT(song_id) DO NOTHING;""")
 temp_song_table_insert = ("""COPY tmp_songs FROM '/home/workspace/songs.csv' \
                             DELIMITER ';' CSV;""")
 
 artist_table_insert = ("""INSERT INTO artists \
                         SELECT DISTINCT ON (artist_id) * \
-                        FROM tmp_artists ON CONFLICT DO NOTHING;""")
+                        FROM tmp_artists ON CONFLICT(artist_id) DO NOTHING;""")
 temp_artist_table_insert = ("""COPY tmp_artists FROM '/home/workspace/artists.csv' \
                             DELIMITER ';' CSV;""")
 
 time_table_insert = ("""INSERT INTO time \
                         SELECT DISTINCT ON (start_time) * \
-                        FROM tmp_time ON CONFLICT DO NOTHING;""")
+                        FROM tmp_time ON CONFLICT(start_time) DO NOTHING;""")
 temp_time_table_insert = ("""COPY tmp_time FROM '/home/workspace/time.csv' \
                             DELIMITER ';' CSV;""")
 
