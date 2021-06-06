@@ -1,6 +1,6 @@
 import psycopg2
-from sql_queries import create_table_queries, drop_table_queries
-
+from sql_queries import create_table_queries, drop_table_queries, files
+import os
 
 def create_database():
     """
@@ -60,7 +60,7 @@ def drop_tables(cur, conn):
     Drops each table using the queries in `drop_table_queries` list.
     Args:
         cur: database cursor.
-        conn: database cunnection.
+        conn: database cunnection.   
     """
     try:
         for query in drop_table_queries:
@@ -81,12 +81,23 @@ def create_tables(cur, conn):
     try:
         for query in create_table_queries:
             cur.execute(query)
-            conn.commit()        
+            conn.commit()    
         print("Tables created succesfuly")
     except psycopg2.Error as e:
         print("Error creating tables")
         print(e)
 
+def delete_csv_files():
+    """
+    Delete each csv file using the filepath in `files` list. 
+    """
+    # As file at filePath is deleted now, so we should check if file exists or not not before deleting them
+    for filePath in files:
+        if os.path.exists(filePath):
+            os.remove(filePath)
+        else:
+            print(f"Can not delete the file {filePath} as it doesn't exists")
+        
 def main():
     """
     - Drops (if exists) and Creates the sparkify database. 
@@ -104,7 +115,7 @@ def main():
     
     drop_tables(cur, conn)
     create_tables(cur, conn)
-
+    delete_csv_files()
     conn.close()
 
 

@@ -2,34 +2,13 @@ import os
 import glob
 import psycopg2
 import pandas as pd
-from sql_queries import *
+from sql_queries_using_insert import *
 
-def insert_data(cur, conn, create_sql, insert_temp_table, insert_table):
-    '''
-    Create a temporary table to store the data, insert data from the csv file into the temporary table, and insert distinct data into the original table. 
-    Args:
-        cur: database cursor.
-        conn: database connection
-        create_sql: create sql querie from sql_queries to create temp table
-        insert_temp_table: insert sql querie from sql_queries to insert data into the temporary table
-        insert_table: insert sql querie from sql_queries to insert distinct data into the original table
-    '''
-    # create tmp table
-    cur.execute(create_sql)
-    conn.commit()
-    
-    # insert data from csv file in temp table
-    cur.execute(insert_temp_table)
-    conn.commit()    
-    
-    # insert distinct data from tmp table into table
-    cur.execute(insert_table)
-    conn.commit()  
 
 def process_song_file(cur, filepath):
 
     '''
-    Reads the json file, process and convert to csv files with the right fields from song and artist df. 
+    Reads the json file, process and insert the right fields in the song and artist tables. 
     Args:
         cur: database cursor.
         filepath: filepath to the json file
@@ -37,16 +16,15 @@ def process_song_file(cur, filepath):
     # open song file
     df = pd.read_json(filepath, lines=True)
 
-    # create song csv file
-    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']]
+    # insert song record
+    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0].tolist()
+    cur.execute(song_table_insert, song_data)
     
-    song_data.to_csv('songs.csv', mode='a', header=False, sep=";", index=False)    
-    
-    # create artist csv file
-    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']]
-    
-    artist_data.to_csv('artists.csv', mode='a', header=False, sep=";", index=False)  
-    
+    # insert artist record
+    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
+    cur.execute(artist_table_insert, artist_data)
+
+
 def process_log_file(cur, filepath):
 
     '''
@@ -64,18 +42,21 @@ def process_log_file(cur, filepath):
     # convert timestamp column to datetime
     t = pd.to_datetime(df['ts'],  unit='ms')
     
-    # convert time data to csv file
+    # insert time data records
     time_data = [t, t.dt.hour, t.dt.day, t.dt.week, t.dt.month, t.dt.year, t.dt.dayofweek]
     column_labels = ['ts', 'hour', 'day', 'week', 'month', 'year', 'dayofweek']
     time_df = pd.DataFrame(dict(zip(column_labels, time_data)))
-    
-    time_df.to_csv('time.csv', mode='a', header=False, sep=";", index=False) 
-    
-    # convert user data to csv file
+
+    for i, row in time_df.iterrows():
+        cur.execute(time_table_insert, list(row))
+
+    # load user table
     user_df = pd.DataFrame(df, columns=('userId', 'firstName', 'lastName', 'gender', 'level'))
 
-    user_df.to_csv('users.csv', mode='a', header=False, sep=";", index=False) 
-    
+    # insert user records
+    for i, row in user_df.iterrows():
+        cur.execute(user_table_insert, row)
+
     # insert songplay records
     for index, row in df.iterrows():
         
@@ -129,38 +110,15 @@ def main():
     
     - Process data to song_data file.  
     
-    - Insert data into songs table
-    
-    - Insert data into artists table
-    
     - Process data to log_data file. 
-    
-    - Insert data into time table
-    
-    - Insert data into users table
     
     - Finally, closes the connection. 
     """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
-    # process song and artist data
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    
-    # insert song data
-    insert_data(cur, conn, temp_song_table_create, temp_song_table_insert, song_table_insert)
-      
-    # insert artist data
-    insert_data(cur, conn, temp_artist_table_create, temp_artist_table_insert, artist_table_insert)
-    
-    # process time and user data
     process_data(cur, conn, filepath='data/log_data', func=process_log_file)
-    
-    # insert time data
-    insert_data(cur, conn, temp_time_table_create, temp_time_table_insert, time_table_insert)
-    
-    # insert user data
-    insert_data(cur, conn, temp_user_table_create, temp_user_table_insert, user_table_insert)
 
     conn.close()
 
